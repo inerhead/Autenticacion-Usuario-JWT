@@ -27,6 +27,8 @@ const existeEmail = async(email) => {
     }
 };
 
+
+
 const existeIdUsuario = async(usuarioId) => {
     const usuarioBD = await Usuario.findById(usuarioId);
     if (!usuarioBD) {
@@ -35,9 +37,17 @@ const existeIdUsuario = async(usuarioId) => {
     }
 };
 
+const noExisteEmail = async(email) => {
+    const existeemail = await Usuario.findOne({ email });
+    if (!existeemail) {
+        throw new Error("Emial / Password incorrectos");
+    }
+};
+
 module.exports = {
     validarCampos,
     validarRol,
     existeEmail,
+    noExisteEmail,
     existeIdUsuario
 };

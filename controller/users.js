@@ -1,6 +1,6 @@
 const { response, request } = require('express');
 const Usuario = require('../model/user');
-const createCustomHash = require('../helpers/encrypt');
+const { createCustomHash } = require('../helpers/encrypt');
 
 
 const usersGet = async(req = request, res = response) => {
@@ -94,15 +94,17 @@ const usersPutError = (req, res = response) => {
     //res.send('Nada que ver ' + dirRoot);
 };
 
-const usersDelete = async(req, res = response) => {
+const usersDelete = async(req = request, res = response) => {
     const { id } = req.params;
-
+    const usuarioAutenticado = req.usuario;
     const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
     const { nombre } = usuario;
 
 
     res.json({
-        nombre
+        nombre,
+        login: 'Valido',
+        usuarioAutenticado
     });
 };
 

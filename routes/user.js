@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { usersDelete, usersPost, usersGet, usersGetById, userPut, usersPutError } = require('../controller/users');
+const { validarToken } = require('../custom-middleware/jwt-validator');
 const { validarCampos, validarRol, existeEmail, existeIdUsuario } = require('../custom-middleware/validator-campos');
 
 const router = Router();
@@ -29,6 +30,7 @@ router.put('/:usuarioId', [
     validarCampos
 ], userPut);
 router.delete('/:id', [
+    validarToken,
     check('id', "No es un ID mongo Adecuado").isMongoId(),
     check('id').custom(existeIdUsuario),
     validarCampos
