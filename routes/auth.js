@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { checkLogin } = require('../controller/login');
+const { checkLogin, checkLoginGoogle } = require('../controller/login');
 const { validarCampos, noExisteEmail } = require('../custom-middleware/validator-campos');
 
 
@@ -12,6 +12,11 @@ router.post('/login', [
     check('email').custom(noExisteEmail),
     validarCampos
 ], checkLogin);
+
+router.post('/google', [
+    check('id_token', "id_token es required").notEmpty(),    
+    validarCampos
+], checkLoginGoogle);
 
 
 module.exports = router;

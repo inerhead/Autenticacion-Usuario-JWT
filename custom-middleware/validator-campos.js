@@ -1,3 +1,4 @@
+const { response, request } = require('express');
 const { validationResult } = require('express-validator');
 const Rol = require('../model/rol');
 const Usuario = require('../model/user');
@@ -44,10 +45,35 @@ const noExisteEmail = async(email) => {
     }
 };
 
+const isRolAllow = async(req = request, resp = response, next) => {
+
+    if (!req.usuario) {
+        return resp.status(500).json({
+            msj: 'Error usuario no identificado en method validarToken'
+        });
+    }
+
+    const { rol, nombre } = req.usuario;
+
+    if (!rol) {
+        return resp.status(500).json({
+            msj: 'Error rol no esta definido en el objeto del usuario logueado'
+        });
+    }
+
+
+
+    next();
+
+
+
+};
+
 module.exports = {
     validarCampos,
     validarRol,
     existeEmail,
     noExisteEmail,
-    existeIdUsuario
+    existeIdUsuario,
+    isRolAllow
 };

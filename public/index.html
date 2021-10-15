@@ -1,12 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Site Gossioj</title>
 </head>
+
 <body>
     <h1>WEB SITE GOSSIO</h1>
+    <h2>Google sign In</h2>
+    <button id= "signout" > LOG OUT</button>
+
+    <div 
+    id="g_id_onload"
+    data-client_id="1070791210401-3cnlu6ee9giig8lerp6sc8g10pct7duu.apps.googleusercontent.com"
+    data-login_uri="https://your.domain/your_login_endpoint"
+    data-auto_prompt="false" 
+    data-callback="handleCredentialResponse">
+    </div>
+    <div 
+    class="g_id_signin"
+    data-type="standard"
+    data-size="large" 
+    data-theme="outline" 
+    data-text="sign_in_with" 
+    data-shape="rectangular" 
+    data-logo_alignment="left">
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        async function handleCredentialResponse(response) {
+            
+            const body = { id_token:  response.credential };
+           
+            try {
+                let rawRest = await fetch("http://localhost:8081/api/auth/google", {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const { user, err } = await rawRest.json();
+                if (err) {
+                    console.log(err);
+                }else{                
+                
+                localStorage.setItem('email', user.email);
+                //location.reload();
+                console.log(user);
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+                }
+                
+            } catch (error) {
+                console.log(error);
+            }    
+                              
+               console.log('FIN');
+
+            
+            
+
+
+
+    /*
+        console.log("ID: " + responsePayload.sub);
+        console.log('Full Name: ' + responsePayload.name);
+        console.log('Given Name: ' + responsePayload.given_name);
+        console.log('Family Name: ' + responsePayload.family_name);
+        console.log("Image URL: " + responsePayload.picture);
+        console.log("Email: " + responsePayload.email);*/
+        }
+
+        const button = document.getElementById('signout');
+        button.onclick = () => {
+            google.accounts.id.disableAutoSelect();
+            google.accounts.id.revoke( localStorage.getItem('email'), done => {
+                localStorage.clear();
+                location.reload();
+            } )
+        } 
+    </script>
 </body>
+
 </html>
